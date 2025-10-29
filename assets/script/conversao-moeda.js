@@ -1,95 +1,92 @@
-// Variável global para armazenar as últimas taxas de câmbio
-const previousRates = {};
+// --- Configurações de Intervalo ---
+const REFRESH_INTERVAL = 60000; // 60 segundos para buscar novos dados da API
+const DISPLAY_INTERVAL = 10000; // 10 segundos para trocar a moeda no display
+
+// --- Configurações da API ---
+const API_URL = 'https://economia.awesomeapi.com.br/json/last/';
+// String de códigos das moedas para buscar de uma vez
+const CURRENCY_CODES = 'USD-BRL,EUR-BRL,GBP-BRL,BTC-BRL,ETH-BRL';
 
 const exchangeRateElement = document.getElementById('dollar_hoje');
-const currencies = [
-  // Ícones do Font Awesome adicionados
-  { code: 'USD', name: 'Dolar', icon: 'fas fa-dollar-sign' },
-  { code: 'EUR', name: 'Euro', icon: 'fas fa-euro-sign' },
-  { code: 'GBP', name: 'Libra', icon: 'fas fa-sterling-sign' },
-  { code: 'BTC', name: 'Bitcoin', icon: 'fab fa-btc' }, // Fab = Font Awesome Brands
-  { code: 'ETH', name: 'Ethereum', icon: 'fab fa-ethereum' } // Fab = Font Awesome Brands
+
+// Mapeamento para exibição (code, name, icon) e o código retornado pela API (apiCode)
+const currenciesDisplay = [
+  { code: 'USD', name: 'Dolar', icon: 'fas fa-dollar-sign', apiCode: 'USDBRL' },
+  { code: 'EUR', name: 'Euro', icon: 'fas fa-euro-sign', apiCode: 'EURBRL' },
+  { code: 'GBP', name: 'Libra', icon: 'fas fa-sterling-sign', apiCode: 'GBPBRL' },
+  { code: 'BTC', name: 'Bitcoin', icon: 'fab fa-btc', apiCode: 'BTCBRL' },
+  { code: 'ETH', name: 'Ethereum', icon: 'fab fa-ethereum', apiCode: 'ETHBRL' }
 ];
+
 let currentCurrencyIndex = 0;
+let ratesData = {}; // Armazena todos os dados obtidos da API
+let displayIntervalId;
+let refreshIntervalId;
 
 /**
- * Busca a taxa de câmbio e a variação para a moeda especificada.
+ * Busca todas as cotações da Awesome API de uma vez.
  */
-async function fetchExchangeRate(currency) {
-  try {
-    const currencyInfo = currencies.find(c => c.code === currency);
-    let response, data, currentRate, changePercentage = 0;
+async function fetchAllRates() {
+    try {
+        const response = await fetch(`${API_URL}${CURRENCY_CODES}`);
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
+        ratesData = await response.json();
+        
+        if (Object.keys(ratesData).length > 0) {
+            // Se esta for a primeira busca, inicia o ciclo de exibição
+            if (!displayIntervalId) {
+                // Exibe a primeira moeda e inicia o ciclo
+                updateDisplay(currenciesDisplay[currentCurrencyIndex]);
+                displayIntervalId = setInterval(cycleCurrencies, DISPLAY_INTERVAL);
+            }
+            // Apenas atualiza o display caso a busca ocorra no meio de uma exibição
+            updateDisplay(currenciesDisplay[currentCurrencyIndex]);
+        } else {
+            exchangeRateElement.innerHTML = '<h1 class="title" style="color: red;">Câmbio</h1><span style="color: white;">Nenhuma cotação encontrada.</span>';
+        }
 
-    // 1. Lógica para CRIPTOMOEDAS (BTC, ETH)
-    if (currency === 'BTC' || currency === 'ETH') {
-      const targetCurrency = currency === 'BTC' ? 'bitcoin' : 'ethereum';
-      
-      // Inclui a variação de 24 horas (24hr_change)
-      response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${targetCurrency}&vs_currencies=brl&include_24hr_change=true`);
-      data = await response.json();
-      
-      currentRate = data[targetCurrency].brl;
-      changePercentage = data[targetCurrency].brl_24h_change;
-
-    // 2. Lógica para MOEDAS FIDUCIÁRIAS (USD, EUR, GBP)
-    } else {
-      // ExchangeRate-API
-      response = await fetch(`https://api.exchangerate-api.com/v4/latest/${currency}`);
-      data = await response.json();
-      currentRate = data.rates.BRL;
-
-      // Compara a taxa atual com a taxa armazenada (se existir)
-      const prevRate = previousRates[currency];
-      if (prevRate) {
-        // Calcula a variação percentual
-        changePercentage = ((currentRate - prevRate) / prevRate) * 100;
-      } else {
-        // Na primeira volta, a variação será 0, e a lógica de display irá tratar.
-        changePercentage = 0; 
-      }
+    } catch (error) {
+        exchangeRateElement.innerHTML = '<h1 class="title" style="color: red;">Câmbio</h1><span style="color: white;">Não foi possível obter a taxa de câmbio.</span>';
+        console.error('Erro ao buscar cotações da AwesomeAPI:', error);
     }
-    
-    // Armazena a taxa atual para a próxima comparação
-    previousRates[currency] = currentRate;
-    
-    // Atualiza a exibição com a nova lógica
-    updateDisplay(currencyInfo, currentRate, changePercentage);
-
-  } catch (error) {
-    exchangeRateElement.innerHTML = '<h1 class="title" style="color: red;">Câmbio</h1><span style="color: white;">Não foi possível obter a taxa de câmbio.</span>';
-    console.error(error);
-  }
 }
 
 /**
- * Atualiza o display com o novo formato, ícones e a porcentagem colorida.
+ * Atualiza o display com os dados do ratesData.
  */
-function updateDisplay(currencyInfo, rate, percentageChange) {
-    const isFiat = ['USD', 'EUR', 'GBP'].includes(currencyInfo.code);
+function updateDisplay(currencyInfo) {
+    const data = ratesData[currencyInfo.apiCode];
 
-    // 1. Define o conteúdo da variação (%)
-    let changeHTML;
-    
-    if (percentageChange === 0 && isFiat) {
-        // Se a mudança for 0 e for moeda Fiat, mostramos um status de espera
-        changeHTML = '<span style="font-size: 16px; color: #aaa;">Aguardando 1ª comparação</span>';
-    } else {
-        // Lógica de seta e cor
-        const isRising = percentageChange >= 0;
-        const arrow = isRising ? '▲' : '▼';
-        const color = isRising ? 'green' : 'red';
-        
-        // Garante que o número é positivo para exibição
-        const formattedChange = Math.abs(parseFloat(percentageChange)).toFixed(2);
-        
-        changeHTML = `
-            <span class="taxa-porcentagem" style="color: ${color}; font-size: 20px; font-weight: bold; white-space: nowrap;">
-              ${arrow} ${formattedChange}%
-            </span>
-        `;
+    if (!data) {
+        // Se os dados não existirem, ignora a atualização (mantém a última taxa exibida)
+        return; 
     }
+
+    // Awesome API: 'bid' é a taxa de compra, 'pctChange' é a variação de 24h (como string)
+    const rate = data.bid;
+    // Converte a string de porcentagem para float
+    const percentageChange = parseFloat(data.pctChange);
+
+    // Lógica de seta e cor
+    const isRising = percentageChange >= 0;
+    const arrow = isRising ? '▲' : '▼';
+    // A cor é definida com base na variação (verde ou vermelho)
+    const color = isRising ? 'green' : 'red';
     
-    const formattedRate = parseFloat(rate).toFixed(2).replace('.', ','); // Formato brasileiro
+    // Garante que o número é positivo para exibição e limita a 2 casas decimais
+    const formattedChange = Math.abs(percentageChange).toFixed(2);
+    
+    // HTML para a variação percentual
+    const changeHTML = `
+        <span class="taxa-porcentagem" style="color: ${color}; font-size: 20px; font-weight: bold; white-space: nowrap;">
+          ${arrow} ${formattedChange}%
+        </span>
+    `;
+    
+    // Formato brasileiro com vírgula (R$ X,XX)
+    const formattedRate = parseFloat(rate).toFixed(2).replace('.', ','); 
     
     // Novo formato HTML
     exchangeRateElement.innerHTML = `
@@ -119,12 +116,15 @@ function updateDisplay(currencyInfo, rate, percentageChange) {
     `;
 }
 
+/**
+ * Avança para a próxima moeda na lista e atualiza o display.
+ */
 function cycleCurrencies() {
-  currentCurrencyIndex = (currentCurrencyIndex + 1) % currencies.length;
-  const nextCurrency = currencies[currentCurrencyIndex].code;
-  fetchExchangeRate(nextCurrency);
+  currentCurrencyIndex = (currentCurrencyIndex + 1) % currenciesDisplay.length;
+  updateDisplay(currenciesDisplay[currentCurrencyIndex]);
 }
 
-// Inicia a busca pela primeira moeda e o ciclo
-fetchExchangeRate(currencies[currentCurrencyIndex].code);
-setInterval(cycleCurrencies, 10000); // Alternar moeda a cada 10 segundos
+// 1. Inicia o processo de busca
+fetchAllRates();
+// 2. Define o intervalo para buscar novos dados (a cada 60s)
+refreshIntervalId = setInterval(fetchAllRates, REFRESH_INTERVAL);

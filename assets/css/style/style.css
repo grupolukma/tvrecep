@@ -89,6 +89,10 @@ body, html {
   flex-direction: column;
 }
 
+.dollar_hoje h1{
+  color: #06dffc;
+}
+
 /* cotacao dolar - adicionado por js */
 .dollar-text {
   display: flex;
