@@ -139,7 +139,10 @@ body, html {
     /* Garante que o ícone ABSOLUTO se posicione DENTRO do contêiner da imagem */
     position: relative; 
     /* Pode ser necessário ajustar a altura ou largura aqui se a imagem não preencher o .present-card */
-}
+    display: flex; /* Adicione display flex para centralizar ou alinhar a imagem interna */
+    justify-content: center; /* Centraliza a imagem horizontalmente */
+    align-items: center; /* Centraliza a imagem verticalmente (se necessário) */
+  }
 
 /* 2. O ícone é posicionado de forma absoluta no canto inferior esquerdo */
 .aniversariante .icone-presente {
@@ -147,12 +150,20 @@ body, html {
     bottom: 10px; /* 10px de distância da parte inferior */
     left: 10px;   /* 10px de distância da parte esquerda */
     
+    bottom: 10px; /* Ajuste este valor. Ex: 10px ou 20px para subir o ícone */
+    right: 10px; /* Ajuste este valor. Ex: 10px ou 20px para mover para a esquerda */    
     /* Estilos de visualização (ajuste se necessário) */
     font-size: 2.5em;       /* Deixa o ícone maior */
-    color: #f7a635;         /* Uma cor de destaque (ex: laranja/ouro) */
+    color: #06d7fc;         /* Uma cor de destaque (ex: laranja/ouro) */
     background-color: rgba(255, 255, 255, 0.9); /* Fundo claro semi-transparente */
     padding: 8px;
     border-radius: 50%;     /* Deixa o fundo redondinho */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     z-index: 10;            /* Garante que ele fique sobre a imagem */
-}
+    /* Adicionando flexbox para centralizar o ícone "fa-gift" dentro do seu próprio círculo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 2.5em; /* Garante que o círculo tenha uma largura e altura definidas */
+    height: 2.5em;
+  }
