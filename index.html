@@ -14,6 +14,7 @@
   <script defer src="assets/script/conversao-moeda.js"></script>
   <script defer src="assets/script/fuso-horario.js"></script>
   <script async src="https://app2.weatherwidget.org/js/?id=ww_f0337094d03f8"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   </head>
   <body>
@@ -30,12 +31,14 @@
         </video>
       </section>
       <!-- (Aniversariante)-->
-      <section class="aniversariante">
+<section class="aniversariante">
+        <canvas id="confetti-canvas"></canvas> 
+        
         <div class="present-card">
           <img id="img" class="img_aniversariante">
           <span class="icone-presente">
-        <i class="fas fa-gift"></i>
-      </span>
+            <i class="fas fa-gift"></i>
+          </span>
         </div>
         <div class="cont_aniversariante">
           <h1 id="titulo"></h1>
