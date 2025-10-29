@@ -1,0 +1,43 @@
+.grid-container {
+  height: 100%;
+  gap: 1rem;
+  padding: 2rem;
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.grid-container > section {
+  padding: 2rem;
+  border-radius: .8rem;
+}
+
+.not_interna {
+  grid-row: 1/6;
+  grid-column: 1/3;
+}
+
+.video {
+  grid-row: 1/6;
+  grid-column: 3/7;
+}
+
+.aniversariante {
+  grid-row: 6/7;
+  grid-column: 1/3;
+}
+
+.dollar_hoje {
+  grid-row: 6/7;
+  grid-column: 3/4;
+}
+
+.hora_mundial {
+  grid-row: 6/7;
+  grid-column: 4/5;
+}
+
+.prev_tempo {
+  grid-row: 6/7;
+  grid-column: 5/7;
+}

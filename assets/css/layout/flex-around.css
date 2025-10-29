@@ -1,0 +1,9 @@
+.news-item,
+.aniversariante,
+.cont_aniversariante,
+.dollar_hoje,
+.hora_mundial {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

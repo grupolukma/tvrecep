@@ -1,0 +1,133 @@
+:root {
+  --main-color: #ffffff; 
+  --card-color: rgba(0, 0, 0, 0.5);
+}
+
+body, html {
+  height: 100%;
+  color: var(--main-color);
+  background: url(../../images/fundo/fun01.jpg) no-repeat center center / cover;
+}
+
+.grid-container > section {
+  background-color: var(--card-color);
+}
+
+/* noticias */
+.not_interna img {
+  border-radius: .8rem;
+}
+
+/* noticias - adionada por JS */
+.news-item {
+  gap: 1rem;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  padding-inline: 2rem;
+  flex-direction: column;
+}
+
+.news-item-img {
+  width: 100%;
+  height: 65%;
+  max-height: 20rem;
+  display: flex;
+  justify-content: center;
+}
+
+.news-item-img img{
+  max-width:100%;
+  max-height: 100%;
+  margin: auto;
+}
+
+/* video */
+.video video {
+  width: 100%;
+  height: 100%;
+}
+
+/* aniversariante */
+.aniversariante {
+  text-align: center;
+  justify-content: space-around;
+}
+
+.img_aniversariante {
+  width: 15rem;
+  height: 15rem;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.cont_aniversariante {
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.present-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.icon_aniversariante {
+  width: 10rem;
+  margin: auto;
+}
+/* cotacao dolar */
+.dollar_hoje {
+  text-align: center;
+  flex-direction: column;
+}
+
+/* cotacao dolar - adicionado por js */
+.dollar-text {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.dollar-text img {
+  width: 2rem; 
+  height: 2rem;
+  border-radius: 50%;
+}
+
+#dollar_hoje {
+  display: flex;
+  flex-direction: column;
+}
+
+/* fuso horario */
+.hora_mundial {
+  height: 100%;
+  text-align: center;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.hora_mundial p {
+  font-size: 1.6rem;
+}
+
+#brasilia-time,
+#newyork-time,
+#hongkong-time {
+  font-family: 'Dosis', sans-serif;
+  font-size: 2.4rem;
+}
+
+/* clima */
+.prev_tempo {
+  display: grid;
+  place-content: center;
+}
+
+.widget_weather {
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+}
