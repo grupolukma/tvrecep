@@ -154,16 +154,16 @@ body, html {
     right: 10px; /* Ajuste este valor. Ex: 10px ou 20px para mover para a esquerda */    
     /* Estilos de visualização (ajuste se necessário) */
     font-size: 2.5em;       /* Deixa o ícone maior */
-    color: #06d7fc;         /* Uma cor de destaque (ex: laranja/ouro) */
-    background-color: rgba(255, 255, 255, 0.9); /* Fundo claro semi-transparente */
+    color: #06dffc;         /* Uma cor de destaque (ex: laranja/ouro) */
+    background-color: rgba(0, 0, 0, 0.397); /* Fundo claro semi-transparente */
     padding: 8px;
     border-radius: 50%;     /* Deixa o fundo redondinho */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 4px rgb(0, 0, 0);
     z-index: 10;            /* Garante que ele fique sobre a imagem */
     /* Adicionando flexbox para centralizar o ícone "fa-gift" dentro do seu próprio círculo */
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 2.5em; /* Garante que o círculo tenha uma largura e altura definidas */
-    height: 2.5em;
+    width: 1.5em; /* Garante que o círculo tenha uma largura e altura definidas */
+    height: 1.5em;
   }
