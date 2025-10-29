@@ -61,9 +61,11 @@
         newsElement.innerHTML = `
             <div class="news-item-img">
                 <img src="${currentNews.image}" alt="Imagem da Notícia">
-            </div>
+                            
             <h2>${currentNews.title}</h2>
             <p>${currentNews.description}</p>
+            </div>
+ 
         `;
 
         newsContainer.innerHTML = '';
