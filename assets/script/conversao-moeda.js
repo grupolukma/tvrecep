@@ -94,8 +94,11 @@ function updateDisplay(currencyInfo) {
       
       <div class="currency-display" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; margin-top: 10px;">
           
-          <span class="currency-value" style="color: white; font-size: 20px; font-weight: bold;">
-            R$ ${formattedRate}
+      <span class="currency-value" style="color: white; font-size: 30px; font-weight: bold;">
+            R$
+          </span>
+          <span class="currency-value" style="color: white; font-size: 30px; font-weight: bold;">
+             ${formattedRate}
           </span>
           
           <div style="display: flex; align-items: center; gap: 10px;">
