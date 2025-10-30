@@ -29,7 +29,7 @@ body, html {
 }
 
 .news-item-img {
-  width: 70%;
+  width: 100%;
   height: auto; /* permite ajustar conforme o conteúdo */
   display: flex;
   justify-content: center;
@@ -37,7 +37,7 @@ body, html {
 }
 
 .news-item-img img {
-  width: 90%;              /* imagem um pouco maior, mas ainda com margem */
+  width: 40%;              /* imagem um pouco maior, mas ainda com margem */
   height: auto;            /* mantém proporção */
   max-height: 26rem;       /* aumente se quiser mais destaque (antes era 20rem) */
   object-fit: cover;       /* garante que a imagem preencha bem o espaço */
