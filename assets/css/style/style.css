@@ -218,3 +218,37 @@ body, html {
     /* ... outros estilos ... */
 }
 
+@media (min-width: 1920px) {
+    /* ** AGORA CORRIGIDO **: Define a base de escalonamento para Full HD. 
+       Isso faz com que TODAS as fontes e elementos em rem aumentem.
+    */
+    :root {
+        font-size: 0.8vw; 
+    }
+
+    
+    /* Aumenta o gap do grid */
+    .grid-container {
+        gap: 1.5rem; 
+        padding: 3rem;
+    }
+}
+
+
+/* --- 3. 4K (A partir de 3840px) --- */
+@media (min-width: 3840px) {
+    /* ** AUMENTA O ESCALONAMENTO **: Redefine 1rem para ser 0.6% da largura da tela. 
+       Isso torna o texto ainda maior para 4K.
+    */
+    :root {
+        font-size: 0.6vw; 
+    }
+
+
+    /* Ajuste específico para os relógios (se necessário um boost extra) */
+    #brasilia-time,
+    #newyork-time,
+    #hongkong-time {
+        font-size: 4rem; 
+    }
+}
