@@ -12,7 +12,7 @@ const LANG = 'pt_br';
 
 // Variáveis Globais e Elementos HTML
 const DIAS_SEMANA_CURTOS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-// IDs da seção clima no seu index.html (como definimos anteriormente)
+// IDs da seção clima no seu index.html 
 const climaAtualElement = document.getElementById('clima-atual');
 const previsaoDiasElement = document.getElementById('previsao-dias');
 
@@ -55,7 +55,6 @@ function fetchWeatherData(endpoint) {
 
 /**
  * Mapeia os códigos de ícone do OpenWeather para classes Font Awesome (Fallback visual).
- * Nota: No display, usaremos o ícone da própria OpenWeather, mas manteremos o mapeamento para cores/descrições.
  */
 function getWeatherIcon(iconCode) {
     // Usamos a lógica de mapeamento para cores e ícones FA (em caso de falha do ícone PNG)
@@ -105,9 +104,10 @@ function displayCurrentWeather(currentData) {
     const cityName = currentData.name || "Localidade Desconhecida";
 
 
+    // Renderização do clima atual
     climaAtualElement.innerHTML = `
         <div class="clima-current-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h2 style="font-size: 24px; color: #06dffc;; margin: 0;">${cityName}</h2>
+            <h2 style="font-size: 24px; color: white; margin: 0;">${cityName}</h2>
             <span style="font-size: 14px; color: #ccc; text-transform: capitalize;">${description}</span>
         </div>
         
@@ -118,10 +118,10 @@ function displayCurrentWeather(currentData) {
             </div>
             
             <div class="clima-details" style="display: flex; flex-direction: column; font-size: 16px;">
-                <p style="color: white; margin: 5px 0;">
+                <p style="color: white; margin: 5px 0; font-size: 12px;">
                     <i class="fas fa-wind" style="margin-right: 8px;"></i> Vento: ${windSpeed} km/h
                 </p>
-                <p style="color: white; margin: 5px 0;">
+                <p style="color: white; margin: 5px 0;font-size: 12px;">
                     <i class="fas fa-tint" style="margin-right: 8px;"></i> Umidade: ${humidity}%
                 </p>
                 <p style="color: #aaa; margin: 5px 0; font-size: 14px;">
@@ -133,7 +133,7 @@ function displayCurrentWeather(currentData) {
 }
 
 /**
- * Exibe a previsão para os próximos 4 dias (filtra a previsão de 3 em 3 horas).
+ * Exibe a previsão para os próximos 4 dias, agregando a temperatura máxima e mínima do dia.
  */
 function displayForecast(forecastData) {
     if (!previsaoDiasElement) return;
@@ -141,51 +141,66 @@ function displayForecast(forecastData) {
     let forecastHTML = '<div class="clima-forecast-list" style="display: flex; justify-content: space-around; margin-top: 20px;">';
     
     const hoje = new Date().getDay(); 
+    // Mapeia todos os itens da lista por dia (0 a 6)
+    const dailyForecasts = {};
     
-    // Array para armazenar os 4 dias em ordem CRONOLÓGICA
-    const forecastDaysArray = []; 
-    // Objeto auxiliar para garantir que só pegamos UMA previsão por dia da semana (índice 0-6)
-    const registeredDays = {};
-    let diasContados = 0;
-    
-    // Filtra para pegar apenas 4 dias futuros (próximo ao meio-dia)
     for (const item of forecastData.list) {
         const date = new Date(item.dt * 1000);
         const diaDaPrevisao = date.getDay(); // 0=Dom, 1=Seg, ..., 6=Sáb
-
-        // 1. Pula o dia atual
+        
+        // Pula o dia atual
         if (diaDaPrevisao === hoje) continue; 
+
+        // Cria o array para o dia se ele ainda não existir
+        if (!dailyForecasts[diaDaPrevisao]) {
+            dailyForecasts[diaDaPrevisao] = {
+                // Usamos o ícone do item mais próximo do meio-dia para o resumo
+                iconItem: null,
+                maxTemp: -Infinity, // Inicializa com menor valor
+                minTemp: Infinity,  // Inicializa com maior valor
+                // Array para armazenar todos os itens do dia
+                items: [],
+                // Para ordenação cronológica
+                timestamp: item.dt
+            };
+        }
+
+        // Armazena todas as temperaturas do dia para encontrar a verdadeira Máxima/Mínima
+        const dayForecast = dailyForecasts[diaDaPrevisao];
+        dayForecast.items.push(item);
         
-        // 2. Se o dia já foi registrado, ou se ainda não chegamos na hora do almoço (12h-15h), pula
-        if (registeredDays[diaDaPrevisao] || date.getHours() < 12 || date.getHours() > 15) continue;
-        
-        // 3. Registra o dia no array CRONOLÓGICO
-        forecastDaysArray.push({
-            // Guarda o índice do dia (0-6) para o nome
-            dayIndex: diaDaPrevisao, 
-            item: item,
-            maxTemp: Math.round(item.main.temp_max),
-            minTemp: Math.round(item.main.temp_min)
-        });
-        // Marca o dia como registrado no objeto auxiliar
-        registeredDays[diaDaPrevisao] = true;
-        diasContados++;
-        
-        // 4. Limita a 4 dias e encerra o loop
-        if (diasContados >= 4) break;
+        // Atualiza a Máxima/Mínima global para o dia
+        dayForecast.maxTemp = Math.max(dayForecast.maxTemp, item.main.temp_max);
+        dayForecast.minTemp = Math.min(dayForecast.minTemp, item.main.temp_min);
+
+        // Seleciona o ícone que será usado (escolhe o ícone da previsão próxima ao meio-dia)
+        if (!dayForecast.iconItem && date.getHours() >= 12 && date.getHours() <= 15) {
+             dayForecast.iconItem = item;
+        }
     }
     
-    // Renderiza a lista usando o array 'forecastDaysArray', que está em ordem cronológica.
-    forecastDaysArray.forEach(dayData => {
-        const iconCode = dayData.item.weather[0].icon;
+    // Converte o objeto de previsões diárias em um array e ordena pelo timestamp (cronológico)
+    const sortedForecasts = Object.values(dailyForecasts)
+        .sort((a, b) => a.timestamp - b.timestamp)
+        // Limita aos 4 dias futuros
+        .slice(0, 4);
+
+    // Renderiza a lista de 4 dias
+    sortedForecasts.forEach(dayData => {
+        // Usa o ícone selecionado, ou o primeiro item do dia como fallback
+        const itemToUse = dayData.iconItem || dayData.items[0]; 
+        const iconCode = itemToUse.weather[0].icon;
         const iconUrl = `https://openweathermap.org/img/wn/${iconCode}.png`;
+        
+        // O índice do dia da semana (0-6)
+        const dayIndex = new Date(itemToUse.dt * 1000).getDay();
         
         forecastHTML += `
             <div class="clima-forecast-item" style="text-align: center; color: white; font-size: 14px;">
-                <p style="margin: 0; text-transform: capitalize;">${DIAS_SEMANA_CURTOS[dayData.dayIndex]}</p>
+                <p style="margin: 0; text-transform: capitalize;">${DIAS_SEMANA_CURTOS[dayIndex]}</p>
                 <img src="${iconUrl}" alt="Clima" style="width: 40px; height: 40px;">
-                <p style="margin: 0; font-weight: bold;">${dayData.maxTemp}°C</p>
-                <p style="margin: 0; color: #aaa;">${dayData.minTemp}°C</p>
+                <p style="margin: 0; font-weight: bold;">${Math.round(dayData.maxTemp)}°C</p>
+                <p style="margin: 0; color: #aaa;">${Math.round(dayData.minTemp)}°C</p>
             </div>
         `;
     });
@@ -224,3 +239,12 @@ function loadTempo() {
 
 loadTempo();
 setInterval(loadTempo, 600000); // Recarrega a cada 10 minutos
+
+/*
+### Resumo das Alterações:
+
+1.  **Agregação Diária (`dailyForecasts`):** Em vez de usar apenas um ponto de dados por dia, o novo código itera sobre todos os dados de 3 em 3 horas fornecidos pela API.
+2.  **Cálculo da Máxima/Mínima:** Para cada dia futuro, ele armazena o `temp_max` e `temp_min` de todas as entradas e usa `Math.max()` e `Math.min()` para encontrar a verdadeira máxima e mínima do período de 24 horas (ou o período coberto pela API para aquele dia).
+3.  **Seleção do Ícone:** O ícone e o nome do dia continuam sendo extraídos do ponto de dados mais próximo do meio-dia (12h às 15h) para garantir que representem as condições diurnas, mas agora as temperaturas são as corretas para o dia inteiro.
+
+Agora, as temperaturas mínima e máxima devem ser diferentes, refletindo a variação real do dia. */
