@@ -107,7 +107,7 @@ function displayCurrentWeather(currentData) {
     // Renderização do clima atual
     climaAtualElement.innerHTML = `
         <div class="clima-current-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h2 style="font-size: 24px; color: white; margin: 0;">${cityName}</h2>
+            <h2 style="font-size: 24px; color: white; margin: 0; color: #06dffc;">${cityName}</h2>
             <span style="font-size: 14px; color: #ccc; text-transform: capitalize;">${description}</span>
         </div>
         
