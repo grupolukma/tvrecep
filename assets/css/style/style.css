@@ -55,6 +55,11 @@ body, html {
   color: #06dffc;
 }
 
+.news-item p {
+  font-size: 1.2rem;
+  color: #ffffff;
+}
+
 
 /* video */
 .video video {
