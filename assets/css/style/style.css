@@ -31,16 +31,20 @@ body, html {
 .news-item-img {
   width: 100%;
   height: 65%;
-
+  max-height: 20rem;
+  display: flex;
+  justify-content: center;
 }
 
 .news-item-img img{
   max-width:100%;
-  max-height: 300%;
+  max-height: 100%;
   margin: auto;
 }
-.news-item-img h2, p {
-  margin-top: 10%;
+
+.news-item h2 {
+  font-size: 1.8rem;
+  color: #06dffc;
 }
 
 
